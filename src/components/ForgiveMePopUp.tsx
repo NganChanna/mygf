@@ -8,8 +8,8 @@ const ForgiveMePopup: React.FC = () => {
   const handleYes = () => setForgiven(true);
 
   const moveNoButton = () => {
-    const randomX = Math.random() * 400 - 200;
-    const randomY = Math.random() * 300 - 150;
+    const randomX = Math.random() * 100 - 50;
+    const randomY = Math.random() * 50 - 25;
     setNoPos({ x: randomX, y: randomY });
   };
 
