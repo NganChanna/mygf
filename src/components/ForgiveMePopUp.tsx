@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ForgiveMePopup: React.FC = () => {
@@ -9,27 +9,31 @@ const ForgiveMePopup: React.FC = () => {
 
   const moveNoButton = () => {
     const randomX = Math.random() * 100 - 50;
-    const randomY = Math.random() * 50 - 25;
+    const randomY = Math.random() * 60 - 30;
     setNoPos({ x: randomX, y: randomY });
   };
 
-  // generate 30 floating hearts
-  const hearts = Array.from({ length: 30 }, (_, i) => ({
-    id: i,
-    emoji: ["💖", "💕", "💞", "💗", "💘"][Math.floor(Math.random() * 5)],
-    x: Math.random() * window.innerWidth - 100,
-    delay: Math.random() * 5,
-    size: Math.random() * 1.5 + 0.8,
-    duration: 6 + Math.random() * 5,
-  }));
+  // Generate 25 floating hearts (useMemo prevents re-creation)
+  const hearts = useMemo(
+    () =>
+      Array.from({ length: 25 }, (_, i) => ({
+        id: i,
+        emoji: ["💖", "💕", "💞", "💗", "💘"][Math.floor(Math.random() * 5)],
+        x: Math.random() * window.innerWidth * 0.9 - window.innerWidth * 0.45, // keep inside screen
+        delay: Math.random() * 4,
+        size: Math.random() * 1.3 + 0.8,
+        duration: 6 + Math.random() * 5,
+      })),
+    []
+  );
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-b from-pink-100 to-pink-200 overflow-hidden">
-      {/* floating hearts */}
+    <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-b from-pink-100 to-pink-200 overflow-hidden px-4">
+      {/* Floating hearts */}
       {hearts.map((heart) => (
         <motion.div
           key={heart.id}
-          className="absolute text-3xl"
+          className="absolute text-2xl sm:text-3xl"
           initial={{
             x: heart.x,
             y: window.innerHeight + 100,
@@ -52,26 +56,27 @@ const ForgiveMePopup: React.FC = () => {
         </motion.div>
       ))}
 
-      <AnimatePresence>
+      {/* Popup */}
+      <AnimatePresence mode="wait">
         {!forgiven ? (
           <motion.div
             key="popup"
-            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            initial={{ scale: 0.8, opacity: 0, y: 30 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.7, opacity: 0 }}
+            exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="bg-white p-6 rounded-3xl shadow-xl text-center border-4 border-pink-200 w-[320px] z-10"
+            className="bg-white p-5 rounded-3xl shadow-xl text-center border-4 border-pink-200 w-full max-w-[320px] z-10"
           >
             <motion.img
-              src="/sadcat.jpg" // 👈 replace this with your cat image path
+              src="/sadcat.jpg" // replace with your image
               alt="Sad Cat"
-              className="w-32 h-32 mx-auto rounded-lg mb-4"
-              animate={{ y: [0, -10, 0] }}
+              className="w-28 h-28 mx-auto rounded-lg mb-4 object-cover"
+              animate={{ y: [0, -8, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
 
             <motion.h2
-              className="text-2xl font-semibold text-pink-600 mb-6"
+              className="text-xl font-semibold text-pink-600 mb-6"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -86,16 +91,16 @@ const ForgiveMePopup: React.FC = () => {
                 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleYes}
-                className="bg-pink-400 hover:bg-pink-500 text-white px-6 py-2 rounded-full font-medium shadow"
+                className="bg-pink-400 hover:bg-pink-500 text-white px-6 py-2 rounded-full font-medium shadow text-sm sm:text-base"
               >
                 Yes 💗
               </motion.button>
 
               <motion.button
                 animate={{ x: noPos.x, y: noPos.y }}
-                transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                transition={{ type: "spring", stiffness: 180, damping: 12 }}
                 onMouseEnter={moveNoButton}
-                className="bg-gray-300 text-gray-600 px-6 py-2 rounded-full font-medium shadow cursor-pointer select-none"
+                className="bg-gray-300 text-gray-600 px-6 py-2 rounded-full font-medium shadow cursor-pointer select-none text-sm sm:text-base"
               >
                 No 😿
               </motion.button>
@@ -108,11 +113,11 @@ const ForgiveMePopup: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center z-10"
+            className="text-center z-10 px-4"
           >
             <motion.h2
               className="text-3xl font-bold text-pink-600 mb-3"
-              animate={{ y: [0, -8, 0] }}
+              animate={{ y: [0, -6, 0] }}
               transition={{
                 duration: 1.5,
                 repeat: Infinity,
